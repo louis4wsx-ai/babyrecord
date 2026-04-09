@@ -514,9 +514,13 @@
             transition: background 0.3s ease;
         }
 /* === 局部滑动排版优化 (固定头部，仅任务区域滑动) === */
+        html, body {
+            overscroll-behavior-y: none; /* 彻底禁用手机系统级的“橡皮筋”回弹拉扯特效 */
+        }
+
         body {
-            height: 100vh;
-            height: 100dvh; /* 适配最新手机浏览器的真实高度，避开底部地址栏 */
+            position: fixed; /* 终极杀招：把网页的四个角像钉子一样死死钉在屏幕物理边缘 */
+            top: 0; left: 0; right: 0; bottom: 0;
             overflow: hidden !important; /* 彻底禁止整页跟随滑动 */
             display: flex;
             flex-direction: column;
@@ -532,6 +536,20 @@
             display: flex; 
             flex-direction: column; 
             min-height: 0; /* 关键魔法：防止主区域被超长的任务列表撑爆 */
+        }
+        
+        main > * {
+            flex-shrink: 0; /* 保护成就栏、分类标签等不被压缩 */
+        }
+        
+        #actionGrid {
+            flex: 1; 
+            overflow-y: auto; /* 开启独立垂直滑动 */
+            -webkit-overflow-scrolling: touch; /* 开启 iOS 丝滑滚动体验 */
+            padding-bottom: calc(2rem + env(safe-area-inset-bottom)); /* 保护底部最后一个任务不被小白条挡住 */
+            align-content: flex-start; /* 当任务较少时乖乖排在顶部，防止按钮被垂直拉伸变丑 */
+            margin-bottom: -1rem; /* 抵消外层边距，让滑动区域直达屏幕最底端 */
+            padding-top: 0.2rem;
         }
         
         main > * {
