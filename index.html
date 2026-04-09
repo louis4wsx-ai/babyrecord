@@ -110,7 +110,6 @@
         .header-bg {
             background: linear-gradient(to right, var(--theme-400), var(--theme-grad-end));
             color: white; padding-bottom: 2.5rem; 
-            padding-top: env(safe-area-inset-top); /* 👈 让背景色向上延伸填满安全区 */
             border-bottom-left-radius: 2rem; border-bottom-right-radius: 2rem;
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
             position: relative; overflow: visible;
@@ -503,6 +502,17 @@
             color: white; box-shadow: 0 4px 14px var(--theme-shadow);
         }
         .welcome-btn:active { transform: scale(0.97); }
+/* 魔法补丁：单独填满顶部安全区（刘海白边），不影响任何原有布局 */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: env(safe-area-inset-top);
+            background: linear-gradient(to right, var(--theme-400), var(--theme-grad-end));
+            transition: background 0.3s ease;
+        }
     </style>
 </head>
 <body> 
