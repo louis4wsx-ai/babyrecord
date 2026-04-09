@@ -1871,14 +1871,40 @@
             const name = nameInput.value.trim(); let points = roundPt(Math.abs(parseFloat(pointsInput.value.trim()))); const type = typeInput.value;
             if(!name) return showToast('请输入任务名称', 'loss'); if(isNaN(points)) return showToast('请输入有效的宝币数', 'loss');
             if(type === 'loss' || type === 'expense') { points = -points; }
+            
+            // 把新任务加入列表
             getActiveChild().categories.find(c => c.id === catId).items.push({ id: 'item_' + Date.now(), label: name, points: points, type: type });
+            
             saveData(); nameInput.value = ''; pointsInput.value = ''; 
             selectTaskType('gain'); // 添加完毕后恢复默认状态
-            renderTaskEditList(); renderActionGrid(); showToast('添加任务成功', 'gain');
+            
+            // 重新渲染任务列表和主界面
+            renderTaskEditList(); 
+            renderActionGrid(); 
+            showToast('添加任务成功', 'gain');
+
+            // 👇 新增代码：触发自动滚动到底部
+            setTimeout(() => {
+                const listEl = document.getElementById('taskEditList');
+                if (listEl) {
+                    // 平滑滚动到列表最底部
+                    listEl.scrollTo({
+                        top: listEl.scrollHeight,
+                        behavior: 'smooth' 
+                    });
+                }
+            }, 50); // 给浏览器50毫秒把新任务画出来
         }
         function deleteTaskItem(catId, itemId) {
+            if (!confirm('确定要删除这个任务吗？')) return; // 👈 这里增加了确认弹窗
+            
             const cat = getActiveChild().categories.find(c => c.id === catId);
-            if(cat) { cat.items = cat.items.filter(i => i.id !== itemId); saveData(); renderTaskEditList(); renderActionGrid(); }
+            if(cat) { 
+                cat.items = cat.items.filter(i => i.id !== itemId); 
+                saveData(); 
+                renderTaskEditList(); 
+                renderActionGrid(); 
+            }
         }
 
         // --- 核心业务逻辑 ---
