@@ -116,7 +116,7 @@
             transition: background 0.3s ease;
         }
         .header-deco { position: absolute; top: 0; left: 0; right: 0; bottom: 0; overflow: hidden; border-radius: inherit; pointer-events: none; }
-        .score-display { font-size: 3.5rem; font-weight: 800; text-shadow: 0 2px 4px rgba(0,0,0,0.1); margin: 0; line-height: 1.1; }
+        .score-display { font-size: 6.5rem; font-weight: 800; text-shadow: 0 4px 8px rgba(0,0,0,0.15); margin: 0; line-height: 1; }
         
         .header-btn {
             background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(4px);
@@ -513,6 +513,40 @@
             background: linear-gradient(to right, var(--theme-400), var(--theme-grad-end));
             transition: background 0.3s ease;
         }
+/* === 局部滑动排版优化 (固定头部，仅任务区域滑动) === */
+        body {
+            height: 100vh;
+            height: 100dvh; /* 适配最新手机浏览器的真实高度，避开底部地址栏 */
+            overflow: hidden !important; /* 彻底禁止整页跟随滑动 */
+            display: flex;
+            flex-direction: column;
+            padding-bottom: 0 !important; /* 移除以前多余的底部空白 */
+        }
+        
+        .header-bg {
+            flex-shrink: 0; /* 保护粉色头部绝对不被压缩 */
+        }
+        
+        main {
+            flex: 1; 
+            display: flex; 
+            flex-direction: column; 
+            min-height: 0; /* 关键魔法：防止主区域被超长的任务列表撑爆 */
+        }
+        
+        main > * {
+            flex-shrink: 0; /* 保护成就栏、分类标签等不被压缩 */
+        }
+        
+        #actionGrid {
+            flex: 1; 
+            overflow-y: auto; /* 开启独立垂直滑动 */
+            -webkit-overflow-scrolling: touch; /* 开启 iOS 丝滑滚动体验 */
+            padding-bottom: calc(2rem + env(safe-area-inset-bottom)); /* 保护底部最后一个任务不被小白条挡住 */
+            align-content: flex-start; /* 当任务较少时乖乖排在顶部，防止按钮被垂直拉伸变丑 */
+            margin-bottom: -1rem; /* 抵消外层边距，让滑动区域直达屏幕最底端 */
+            padding-top: 0.2rem;
+        }
     </style>
 </head>
 <body> 
@@ -615,7 +649,7 @@
         </div>
 
         <div class="flex flex-col items-center">
-            <div class="flex items-center gap-2 mt-2 mb-1" style="background: rgba(255,255,255,0.15); padding: 0.3rem 0.8rem; border-radius: 9999px; cursor: pointer;" onclick="openChildModal()">
+            <div class="flex items-center gap-2 mb-1" style="margin-top: -1.2rem; background: rgba(255,255,255,0.15); padding: 0.3rem 0.8rem; border-radius: 9999px; cursor: pointer;" onclick="openChildModal()">
                 <div id="activeChildAvatar" style="background: white; color: var(--theme-500); width: 1.5rem; height: 1.5rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.85rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); transition: color 0.3s;"></div>
                 <h1 id="activeChildName" style="font-size: 1.1rem; font-weight: 700; margin: 0; letter-spacing: 0.05em; text-shadow: 0 1px 2px rgba(0,0,0,0.1);">加载中</h1>
                 <svg class="icon" viewBox="0 0 24 24" style="width: 1rem; height: 1rem;"><path d="m6 9 6 6 6-6"/></svg>
