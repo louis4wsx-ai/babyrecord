@@ -236,25 +236,20 @@
 
         .list-item { display: flex; justify-content: space-between; align-items: center; padding: 0.6rem; background: var(--slate-50); border: 1px solid var(--slate-100); border-radius: 0.6rem; margin-bottom: 0.4rem; }
 
-        /* 拖拽排序样式 */
+        /* 拖拽排序样式 (已替换为点击排序) */
         .drag-item {
             display: flex; align-items: center; padding: 0.5rem; background: var(--slate-50);
             border: 1px solid var(--slate-100); border-radius: 0.6rem; margin-bottom: 0.4rem;
-            touch-action: none; transition: box-shadow 0.2s, border-color 0.2s;
+            transition: box-shadow 0.2s, border-color 0.2s;
         }
-        .drag-item.dragging {
-            opacity: 0.9; box-shadow: 0 8px 20px rgba(0,0,0,0.15); border-color: var(--theme-300);
-            z-index: 999; position: relative; background: white;
+        .sort-btn {
+            display: flex; align-items: center; justify-content: center;
+            padding: 0.25rem; margin: 1px 0; color: var(--slate-400);
+            background: transparent; border: none; border-radius: 0.3rem; cursor: pointer; transition: all 0.2s;
         }
-        .drag-item.drag-over-above { border-top: 2px solid var(--theme-400); margin-top: -1px; }
-        .drag-item.drag-over-below { border-bottom: 2px solid var(--theme-400); margin-bottom: -1px; }
-        .drag-handle {
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            padding: 0.4rem 0.35rem; margin-right: 0.4rem; color: var(--slate-300);
-            cursor: grab; flex-shrink: 0; border-radius: 0.3rem;
-        }
-        .drag-handle:active { cursor: grabbing; color: var(--theme-400); }
-        .drag-handle svg { width: 1rem; height: 1rem; }
+        .sort-btn:active { background: var(--slate-200); color: var(--theme-500); }
+        .sort-btn:disabled { opacity: 0.2; cursor: not-allowed; }
+        .sort-btn svg { width: 1.1rem; height: 1.1rem; }
         .points-edit-btn {
             display: inline-flex; align-items: center; gap: 2px; padding: 0.15rem 0.4rem;
             border-radius: 0.4rem; font-weight: 800; font-size: 0.75rem; cursor: pointer;
@@ -782,7 +777,7 @@
 
                 <div style="font-size: 0.8rem; font-weight: 700; color: var(--slate-500); margin-bottom: 0.5rem; display:flex; justify-content:space-between; align-items:center;">
                     <span>当前分类下的任务：</span>
-                    <span style="font-size:0.65rem; color:var(--slate-400); font-weight:400;">按住 ☰ 拖动排序 · 点宝币可改值</span>
+                    <span style="font-size:0.65rem; color:var(--slate-400); font-weight:400;">点击 ∧ ∨ 排序 · 点宝币可改值</span>
                 </div>
                 <div id="taskEditList" style="flex: 1; overflow-y: auto; max-height: 25vh; margin-bottom: 1rem; padding-right: 0.2rem;"></div>
 
@@ -1118,29 +1113,47 @@
                 detail: '三餐满分约30宝币/天，重点培养独立吃饭、餐桌礼仪、个人卫生。奖励设计让孩子"够得着"：每天表现好就能攒出看动画片的宝币。',
                 categories: [
                     { id: 'dining', title: '用餐情况', items: [
-                        { id:'t1', label: '衣服干净', points: 2, type: 'gain' },
-                        { id:'t2', label: '不用手抓', points: 2, type: 'gain' },
-                        { id:'t3', label: '自己洗手', points: 2, type: 'gain' },
-                        { id:'t4', label: '独立吃饭', points: 3, type: 'gain' },
-                        { id:'t5', label: '40分钟内吃完', points: 3, type: 'gain' },
-                        { id:'t6', label: '中途不离桌', points: 2, type: 'gain' },
+                        { id:'t1', label: '独立吃饭', points: 2, type: 'gain' },
+                        { id:'t2', label: '40分钟内吃完', points: 2, type: 'gain' },
+                        { id:'t3', label: '中途不离桌', points: 1, type: 'gain' },
+                        { id:'t4', label: '不用手吃饭', points: 2, type: 'gain' },
+                        { id:'t5', label: '自己洗手', points: 1, type: 'gain' },
+                        { id:'t6', label: '衣服干净', points: 2, type: 'gain' },
                     ]},
-                    { id: 'self_care', title: '自理任务', items: [
+                    { id: 'self_care', title: '自食其力', items: [
                         { id:'t7', label: '自己穿衣', points: 1, type: 'gain' },
-                        { id:'t8', label: '自己刷牙', points: 2, type: 'gain' },
-                        { id:'t9', label: '自己收玩具', points: 2, type: 'gain' },
-                        { id:'t10', label: '自己睡觉', points: 10, type: 'gain' },
+                        { id:'t8', label: '自己脱衣', points: 1, type: 'gain' },
+                        { id:'t9', label: '叠放衣服', points: 1, type: 'gain' },
+                        { id:'t10', label: '自己刷牙', points: 1, type: 'gain' },
+                        { id:'t11', label: '独立睡觉', points: 1, type: 'gain' },
+                        { id:'t12', label: '独立尿尿', points: 1, type: 'gain' },
+                        { id:'t13', label: '独立臭臭', points: 1, type: 'gain' },
+                        { id:'t14', label: '协助额外家务', points: 5, type: 'gain' },
+                        { id:'t15', label: '获得表扬', points: 2, type: 'gain' },
                     ]},
-                    { id: 'rewards', title: '兑换奖励', items: [
-                        { id:'t11', label: '看动画片(1集)', points: -10, type: 'expense' },
-                        { id:'t12', label: '买小零食', points: -15, type: 'expense' },
-                        { id:'t13', label: '买小玩具', points: -25, type: 'expense' },
-                        { id:'t14', label: '去游乐场', points: -50, type: 'expense' },
+                    { id: 'milestone', title: '成长里程碑', items: [
+                        { id:'t16', label: '获得新技能', points: 20, type: 'gain' },
+                    ]},
+                    { id: 'expense', title: '消费宝币', items: [
+                        { id:'t17', label: '小零食', points: -10, type: 'expense' },
+                        { id:'t18', label: '膨化食品', points: -25, type: 'expense' },
+                        { id:'t19', label: '甜食', points: -25, type: 'expense' },
+                        { id:'t20', label: '看电视（10 分钟）', points: -10, type: 'expense' },
+                        { id:'t21', label: '看手机（10 分钟）', points: -20, type: 'expense' },
+                        { id:'t22', label: '0-100元玩具', points: -25, type: 'expense' },
+                        { id:'t23', label: '100-300元玩具', points: -60, type: 'expense' },
+                        { id:'t24', label: '300-500元玩具', points: -100, type: 'expense' },
+                        { id:'t25', label: '500-1000元玩具', points: -300, type: 'expense' },
+                        { id:'t26', label: '1000以上用品', points: -1000, type: 'expense' },
+                        { id:'t27', label: '游乐场', points: -150, type: 'expense' },
+                        { id:'t28', label: '旅游（每天）', points: -100, type: 'expense' },
                     ]},
                     { id: 'penalty', title: '扣币惩罚', items: [
-                        { id:'t15', label: '情绪失控', points: -10, type: 'loss' },
-                        { id:'t16', label: '拖拉磨蹭', points: -2, type: 'loss' },
-                        { id:'t17', label: '忘记洗手', points: -2, type: 'loss' },
+                        { id:'t29', label: '打架', points: -20, type: 'loss' },
+                        { id:'t30', label: '严重撒谎', points: -20, type: 'loss' },
+                        { id:'t31', label: '拖拉（多次提醒）', points: -2, type: 'loss' },
+                        { id:'t32', label: '尿裤子（白天憋尿）', points: -5, type: 'loss' },
+                        { id:'t33', label: '说脏话', points: -10, type: 'loss' },
                     ]},
                 ],
                 rules: { rule1Days: 30, rule1Reward: 30, rule2Days: 30, rule2Target: 100, rule2Reward: 20 }
@@ -1689,8 +1702,19 @@
                 const el = document.createElement('div'); el.className = 'drag-item'; el.setAttribute('data-idx', idx);
                 let typeText = item.type === 'gain' ? '赚宝币' : (item.type === 'loss' ? '罚宝币' : '用宝币');
                 let color = item.type === 'gain' ? 'var(--theme-500)' : (item.type === 'loss' ? 'var(--red-500)' : 'var(--purple-500)');
+                
+                const isFirst = idx === 0;
+                const isLast = idx === cat.items.length - 1;
+
                 el.innerHTML = `
-                    <div class="drag-handle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/></svg></div>
+                    <div style="display:flex; flex-direction:column; align-items:center; margin-right:0.4rem; flex-shrink:0;">
+                        <button class="sort-btn" onclick="moveTaskItem('${catId}', ${idx}, -1)" ${isFirst ? 'disabled' : ''}>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
+                        </button>
+                        <button class="sort-btn" onclick="moveTaskItem('${catId}', ${idx}, 1)" ${isLast ? 'disabled' : ''}>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                        </button>
+                    </div>
                     <div style="flex:1; min-width:0;">
                         <div style="font-weight:700; color:var(--slate-700); font-size:0.9rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${item.label}</div>
                         <div style="font-size:0.7rem; margin-top:2px; display:flex; align-items:center; gap:2px;">
@@ -1705,7 +1729,6 @@
                 `;
                 list.appendChild(el);
             });
-            initDragSort(list, catId);
         }
 
         // --- 内联修改宝币数 ---
@@ -1753,126 +1776,19 @@
         }
 
         // --- 长按拖拽排序 ---
-        function initDragSort(listEl, catId) {
-            let dragIdx = null;       // 正在拖拽的索引
-            let longPressTimer = null;
-            let isDragging = false;
-            let clone = null;         // 拖拽幽灵
-            let startY = 0;
-            let offsetY = 0;
-            let items = [];           // 所有 drag-item DOM 引用
-            let rects = [];           // 缓存的 boundingRect
-            let dropIdx = null;       // 要放到哪个位置
-
-            function getTouchY(e) { return e.touches ? e.touches[0].clientY : e.clientY; }
-
-            function onTouchStart(e) {
-                // 只响应 drag-handle 上的触摸
-                const handle = e.target.closest('.drag-handle');
-                if (!handle) return;
-                const dragItem = handle.closest('.drag-item');
-                if (!dragItem) return;
-                dragIdx = parseInt(dragItem.getAttribute('data-idx'));
-                startY = getTouchY(e);
-                
-                longPressTimer = setTimeout(() => {
-                    beginDrag(e, dragItem);
-                }, 200); // 200ms 长按触发
-            }
-
-            function beginDrag(e, dragItem) {
-                isDragging = true;
-                items = Array.from(listEl.querySelectorAll('.drag-item'));
-                rects = items.map(el => el.getBoundingClientRect());
-
-                // 创建幽灵
-                clone = dragItem.cloneNode(true);
-                clone.style.cssText = `position:fixed; left:${rects[dragIdx].left}px; width:${rects[dragIdx].width}px; z-index:1000; pointer-events:none; opacity:0.85; box-shadow:0 8px 25px rgba(0,0,0,0.2); border-color:var(--theme-400); background:white; border-radius:0.6rem; transition:none;`;
-                clone.style.top = rects[dragIdx].top + 'px';
-                document.body.appendChild(clone);
-                offsetY = getTouchY(e) - rects[dragIdx].top;
-
-                dragItem.style.opacity = '0.25';
-                
-                // 阻止页面滚动
-                document.body.style.overflow = 'hidden';
-            }
-
-            function onTouchMove(e) {
-                if (longPressTimer && Math.abs(getTouchY(e) - startY) > 10) {
-                    clearTimeout(longPressTimer); longPressTimer = null;
-                    return; // 手指滑动太多，取消长按
-                }
-                if (!isDragging) return;
-                e.preventDefault();
-
-                const y = getTouchY(e);
-                clone.style.top = (y - offsetY) + 'px';
-
-                // 判断落点
-                items.forEach((el, i) => {
-                    el.classList.remove('drag-over-above', 'drag-over-below');
-                });
-                dropIdx = dragIdx;
-                for (let i = 0; i < rects.length; i++) {
-                    const mid = rects[i].top + rects[i].height / 2;
-                    if (y < mid && i <= dragIdx) { dropIdx = i; break; }
-                    if (y > mid && i >= dragIdx) { dropIdx = i; }
-                }
-                // 显示插入指示线
-                if (dropIdx !== dragIdx) {
-                    if (dropIdx < dragIdx) {
-                        items[dropIdx].classList.add('drag-over-above');
-                    } else {
-                        items[dropIdx].classList.add('drag-over-below');
-                    }
-                }
-            }
-
-            function onTouchEnd(e) {
-                if (longPressTimer) { clearTimeout(longPressTimer); longPressTimer = null; }
-                if (!isDragging) { dragIdx = null; return; }
-                isDragging = false;
-                document.body.style.overflow = '';
-                
-                // 清理幽灵和指示线
-                if (clone && clone.parentNode) clone.parentNode.removeChild(clone);
-                clone = null;
-                items.forEach(el => {
-                    el.style.opacity = '';
-                    el.classList.remove('drag-over-above', 'drag-over-below');
-                });
-
-                // 执行排序
-                if (dropIdx !== null && dropIdx !== dragIdx) {
-                    const cat = getActiveChild().categories.find(c => c.id === catId);
-                    if (cat) {
-                        const moved = cat.items.splice(dragIdx, 1)[0];
-                        cat.items.splice(dropIdx, 0, moved);
-                        saveData(); renderTaskEditList(); renderActionGrid();
-                    }
-                }
-                dragIdx = null; dropIdx = null;
-            }
-
-            // 绑定事件（touch + mouse 兼容）
-            listEl.addEventListener('touchstart', onTouchStart, { passive: true });
-            listEl.addEventListener('touchmove', onTouchMove, { passive: false });
-            listEl.addEventListener('touchend', onTouchEnd);
-            listEl.addEventListener('mousedown', onTouchStart);
-            document.addEventListener('mousemove', onTouchMove);
-            document.addEventListener('mouseup', onTouchEnd);
-
-            // 清理函数挂在 list 上，下次渲染前可清除
-            listEl._dragCleanup = () => {
-                listEl.removeEventListener('touchstart', onTouchStart);
-                listEl.removeEventListener('touchmove', onTouchMove);
-                listEl.removeEventListener('touchend', onTouchEnd);
-                listEl.removeEventListener('mousedown', onTouchStart);
-                document.removeEventListener('mousemove', onTouchMove);
-                document.removeEventListener('mouseup', onTouchEnd);
-            };
+        function moveTaskItem(catId, idx, direction) {
+            const cat = getActiveChild().categories.find(c => c.id === catId);
+            if (!cat || !cat.items) return;
+            const newIdx = idx + direction;
+            if (newIdx < 0 || newIdx >= cat.items.length) return;
+            const temp = cat.items[idx];
+            cat.items[idx] = cat.items[newIdx];
+            cat.items[newIdx] = temp;
+            saveData();
+            renderTaskEditList();
+            renderActionGrid();
         }
+
         function selectTaskType(type) {
             document.getElementById('newTaskType').value = type;
             document.querySelectorAll('.type-opt').forEach(el => el.classList.remove('active'));
