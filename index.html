@@ -110,6 +110,7 @@
         .header-bg {
             background: linear-gradient(to right, var(--theme-400), var(--theme-grad-end));
             color: white; padding-bottom: 2.5rem; 
+            padding-top: env(safe-area-inset-top); /* 👈 让背景色向上延伸填满安全区 */
             border-bottom-left-radius: 2rem; border-bottom-right-radius: 2rem;
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
             position: relative; overflow: visible;
